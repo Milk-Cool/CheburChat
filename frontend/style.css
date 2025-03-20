@@ -41,19 +41,19 @@ input, label {
     line-height: var(--bottom-bar-height);
 }
 input[type="submit"] {
-    width: 10vw;
+    width: 15vw;
 }
 input[name="message"] {
     padding-left: 1em;
     padding-right: 1em;
     text-align: left;
-    width: 85vw;
+    width: 70vw;
 }
 input[name="message"]::placeholder {
     color: #ddd;
 }
 label {
-    width: 5vw;
+    width: 15vw;
 }
 #f {
     position: fixed;

@@ -1,2 +1,2 @@
 # CheburChat
-An offline local chat for your ESP-32
+An offline local chat for your ESP board

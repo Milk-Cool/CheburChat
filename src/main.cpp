@@ -58,6 +58,7 @@ void event(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
     switch(type) {
         case WStype_CONNECTED:
             clients.push_back(num);
+            wss.sendTXT(num, DEFAULT_MESSAGE); // TODO: check if length == 0
             break;
         case WStype_DISCONNECTED:
             for(auto it = clients.begin(); it != clients.end(); it++) {

@@ -1,10 +1,60 @@
+:root {
+    --bottom-bar-height: 3em;
+}
+body {
+    background: #eee;
+}
 .m {
-    background: #ddd;
-    border: 1px solid black;
-    max-width: 90vw;
+    background: green;
+    color: white;
+    border-radius: 0 .5em .5em .5em;
+    width: fit-content;
     line-break: anywhere;
     margin-left: auto;
     margin-right: auto;
     padding: .5em;
     margin: .5em;
+}
+#c {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - var(--bottom-bar-height));
+}
+input, label {
+    background: darkslateblue;
+    border: none;
+    padding: 0;
+    color: white;
+    height: 100%;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    cursor: pointer;
+    text-align: center;
+    line-height: var(--bottom-bar-height);
+}
+input[type="submit"] {
+    width: 10vw;
+}
+input[name="message"] {
+    padding-left: 1em;
+    padding-right: 1em;
+    text-align: left;
+    width: 85vw;
+}
+input[name="message"]::placeholder {
+    color: #ddd;
+}
+label {
+    width: 5vw;
+}
+#f {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: var(--bottom-bar-height);
+    flex-direction: row;
+    display: flex;
 }

@@ -10,6 +10,10 @@
 #include <Preferences.h>
 #include <DNSServer.h>
 #include <LittleFS.h>
+#include <WebSocketsServer.h>
+#include <vector>
+
+using namespace std;
 
 #include "defaults.h"
 
@@ -20,6 +24,8 @@ ESP8266WebServer server(80);
 #elif defined(ESP32)
 WebServer server(80);
 #endif
+
+WebSocketsServer wss = WebSocketsServer(8080);
 
 String getContentType(String path) {
     if(path.endsWith(".css"))
@@ -46,6 +52,51 @@ bool handleFileRead(String path) {
     return false;
 }
 
+vector<uint8_t> clients;
+
+void event(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
+    switch(type) {
+        case WStype_CONNECTED:
+            clients.push_back(num);
+            break;
+        case WStype_DISCONNECTED:
+            for(auto it = clients.begin(); it != clients.end(); it++) {
+                int i = distance(clients.begin(), it);
+                if(clients[i] == num) {
+                    clients.erase(it);
+                    break;
+                }
+            }
+            break;
+        case WStype_TEXT:
+            if(length == 0) break;
+            for(auto client : clients) {
+                if(client == num) continue;
+                wss.sendTXT(client, payload);
+            }
+            break;
+        case WStype_BIN:
+            if(length == 0) break;
+            for(auto client : clients) {
+                if(client == num) continue;
+                wss.sendBIN(client, payload, length);
+            }
+            break;
+        case WStype_ERROR:
+            break;
+    }
+}
+
+String redirect_from[] = {
+    "/",
+    "/generate_204",
+    "/fwlink",
+    "/check_network_status.txt",
+    "/ncsi.txt",
+    "/connecttest.txt",
+    "/redirect"
+};
+
 void setup() {
     WiFi.mode(WIFI_AP);
     // TODO: put this in preferences
@@ -64,27 +115,25 @@ void setup() {
 
     server.serveStatic("/chat/", LittleFS, "/");
 
-    server.on("/", HTTP_GET, []() {
-        server.sendHeader("Location", "/chat/index.html", true);
-        server.send(302, "text/plain", "");
-    });
-    server.on("/generate_204", HTTP_GET, []() {
-        server.sendHeader("Location", "/chat/index.html", true);
-        server.send(302, "text/plain", "");
-    });
-    server.on("/fwlink", HTTP_GET, []() {
-        server.sendHeader("Location", "/chat/index.html", true);
-        server.send(302, "text/plain", "");
-    });
+    for(String path : redirect_from) {
+        server.on(path, HTTP_GET, []() {
+            server.sendHeader("Location", "/chat/index.html", true);
+            server.send(302, "text/plain", "");
+        });
+    }
     server.onNotFound([]() {
         if(!handleFileRead(server.uri()))
-            server.send(404, "text/plain", "Not found (LittleFS)");
+            server.send(404, "text/plain", (String("Not found (LittleFS): ") + server.uri()).c_str());
     });
 
     server.begin();
+
+    wss.begin();
+    wss.onEvent(event);
 }
 
 void loop() {
     dnsServer.processNextRequest();
     server.handleClient();
+    wss.loop();
 }

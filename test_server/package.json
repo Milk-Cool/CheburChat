@@ -1,0 +1,17 @@
+{
+  "name": "cheburchat-test-server",
+  "version": "0.1.0",
+  "description": "Test server for CheburChat",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "cheburchat"
+  ],
+  "author": "Milk_Cool",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.18.1"
+  }
+}

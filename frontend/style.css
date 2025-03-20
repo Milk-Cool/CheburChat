@@ -4,6 +4,9 @@
 body {
     background: #eee;
 }
+* {
+    font-family: sans-serif;
+}
 .m {
     background: green;
     color: white;
@@ -14,6 +17,9 @@ body {
     margin-right: auto;
     padding: .5em;
     margin: .5em;
+}
+.m > img {
+    min-width: 20em;
 }
 #c {
     position: fixed;

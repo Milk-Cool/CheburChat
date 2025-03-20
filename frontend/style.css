@@ -1,4 +1,5 @@
 :root {
+    --top-bar-height: 3em;
     --bottom-bar-height: 3em;
 }
 body {
@@ -6,6 +7,27 @@ body {
 }
 * {
     font-family: sans-serif;
+}
+#e:not(.show) {
+    display: none;
+}
+#e {
+    background: #ddd;
+    position: fixed;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+#e input, #e textarea {
+    background: white;
+    padding: .5em;
+    margin: .5em;
+    border: 1px solid black !important;
+    color: black;
+}
+#e input::placeholder, #e textarea::placeholder {
+    color: gray;
 }
 .m {
     background: green;
@@ -22,24 +44,46 @@ body {
 .m > img {
     min-width: 20em;
 }
-#c {
+#h {
+    background: darkslateblue;
+    color: white;
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
-    height: calc(100vh - var(--bottom-bar-height));
+    height: var(--top-bar-height);
+    line-height: var(--top-bar-height);
+    display: flex;
+}
+#s {
+    width: 30vw;
+}
+#c {
+    position: fixed;
+    top: var(--top-bar-height);
+    line-height: var(--top-bar-height);
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - var(--bottom-bar-height) - var(--top-bar-height));
+    overflow-y: scroll;
 }
 input, label {
+    height: 100%;
+    text-align: center;
+    line-height: var(--bottom-bar-height);
+}
+input, label, #s, #h > span {
     background: darkslateblue;
     border: none;
     padding: 0;
     color: white;
-    height: 100%;
+    cursor: pointer;
     border-left: 1px solid white;
     border-right: 1px solid white;
-    cursor: pointer;
-    text-align: center;
-    line-height: var(--bottom-bar-height);
+}
+#h > span {
+    width: 70vw;
+    padding-left: 1em;
 }
 input[type="submit"] {
     width: 15vw;
@@ -50,7 +94,7 @@ input[name="message"] {
     text-align: left;
     width: 70vw;
 }
-input[name="message"]::placeholder {
+input::placeholder {
     color: #ddd;
 }
 label {

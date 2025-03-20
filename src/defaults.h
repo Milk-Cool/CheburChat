@@ -6,4 +6,5 @@
 #define DEFAULT_ADMIN_PASS "chebchat"
 #define DEFAULT_MESSAGE "Welcome to CheburChat!\n" \
     "You can customize network and chat settings in the settings.\n" \
+    "Default password: chebchat.\n" \
     "Use the + icon to attach media."

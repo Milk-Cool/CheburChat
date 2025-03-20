@@ -8,6 +8,29 @@
         <link href="style.css" rel="stylesheet">
     </head>
     <body>
+        <div id="e">
+            <h3>Update settings</h3>
+            <form action="/settings" method="POST">
+                <input name="username" value="cheburchat" hidden>
+                <input type="password" name="admin_pass" placeholder="Admin password" autocomplete="current-password"><br>
+                <input minlength="1" maxlength="63" name="ssid" placeholder="SSID"><br>
+                <input type="checkbox" name="type" id="type"><label for="type">Password-protected</label><br>
+                <input minlength="8" maxlength="63" name="pass" type="password" placeholder="WiFi password"><br>
+                <textarea name="message" placeholder="Welcome message"></textarea><br>
+                <input type="submit">
+            </form>
+            <h3>Update password</h3>
+            <form action="/password" method="POST">
+                <input name="username" value="cheburchat" hidden>
+                <input type="password" name="admin_pass" placeholder="Admin password" autocomplete="current-password"><br>
+                <input type="password" name="new_pass" placeholder="New password" autocomplete="new-password"><br>
+                <input type="password" name="new_pass_repeat" placeholder="New password (repeat)" autocomplete="new-password"><br>
+                <input type="submit">
+            </form>
+        </div>
+        <div id="h">
+            <span>CheburChat</span><button id="s">Settings</button>
+        </div>
         <div id="c">
         </div>
         <form id="f">

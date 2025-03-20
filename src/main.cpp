@@ -25,6 +25,8 @@ ESP8266WebServer server(80);
 WebServer server(80);
 #endif
 
+Preferences prefs;
+
 WebSocketsServer wss = WebSocketsServer(8080);
 
 String getContentType(String path) {
@@ -52,13 +54,36 @@ bool handleFileRead(String path) {
     return false;
 }
 
+#define KEY_SSID "ssid"
+#define KEY_TYPE "type"
+#define KEY_PASS "pass"
+#define KEY_ADMIN_PASS "admin_pass"
+#define KEY_MESSAGE "message"
+
+String get_ssid() {
+    return prefs.getString(KEY_SSID, DEFAULT_SSID);
+}
+int get_type() {
+    return prefs.getInt(KEY_TYPE, DEFAULT_TYPE);
+}
+String get_pass() {
+    return prefs.getString(KEY_PASS, DEFAULT_PASS);
+}
+String get_admin_pass() {
+    return prefs.getString(KEY_ADMIN_PASS, DEFAULT_ADMIN_PASS);
+}
+String get_message() {
+    return prefs.getString(KEY_MESSAGE, DEFAULT_MESSAGE);
+}
+
 vector<uint8_t> clients;
 
 void event(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
     switch(type) {
         case WStype_CONNECTED:
             clients.push_back(num);
-            wss.sendTXT(num, DEFAULT_MESSAGE); // TODO: check if length == 0
+            String message = get_message();
+            if(message.length() > 0) wss.sendTXT(num, message.c_str());
             break;
         case WStype_DISCONNECTED:
             for(auto it = clients.begin(); it != clients.end(); it++) {
@@ -99,18 +124,26 @@ String redirect_from[] = {
 };
 
 void setup() {
-    WiFi.mode(WIFI_AP);
-    // TODO: put this in preferences
-    if(DEFAULT_TYPE)
-        WiFi.softAP(DEFAULT_SSID, DEFAULT_PASS);
-    else
-        WiFi.softAP(DEFAULT_SSID);
-    IPAddress ip = WiFi.softAPIP();
-    dnsServer.start(53, "*", ip);
+    prefs.begin("cheburchat");
 
     Serial.begin(115200);
     Serial.println(); Serial.println();
     Serial.println("start");
+
+    Serial.println("admin pass " + get_admin_pass());
+    Serial.println("ssid " + get_ssid());
+    Serial.println("pass " + get_pass());
+    Serial.println("type " + String(get_type(), 10));
+    Serial.println("message " + get_message());
+
+    WiFi.mode(WIFI_AP);
+    if(get_type())
+        WiFi.softAP(get_ssid(), get_pass());
+    else
+        WiFi.softAP(get_ssid());
+    while(WiFi.softAPgetStationNum() == 0) delay(1);
+    IPAddress ip = WiFi.softAPIP();
+    dnsServer.start(53, "*", ip);
 
     LittleFS.begin();
 
@@ -125,6 +158,47 @@ void setup() {
     server.onNotFound([]() {
         if(!handleFileRead(server.uri()))
             server.send(404, "text/plain", (String("Not found (LittleFS): ") + server.uri()).c_str());
+    });
+    server.on("/settings", HTTP_POST, []() {
+        String admin_pass = server.arg("admin_pass");
+        if(admin_pass != get_admin_pass()) {
+            server.send(403, "text/plain", "Wrong password!");
+            return;
+        }
+        int type = server.arg("type") == "on" ? 1 : 0;
+        String pass = server.arg("pass");
+        if(type && (pass.length() < 8 || pass.length() > 63)) {
+            server.send(400, "text/plain", "Invalid password length!");
+            return;
+        }
+        String ssid = server.arg("ssid");
+        if(ssid.length() == 0 || ssid.length() > 63) {
+            server.send(400, "text/plain", "Invalid SSID length!");
+            return;
+        }
+        String message = server.arg("message");
+        prefs.putString(KEY_SSID, ssid);
+        prefs.putString(KEY_PASS, pass);
+        prefs.putInt(KEY_TYPE, type);
+        prefs.putString(KEY_MESSAGE, message);
+        server.send(200, "text/plain", "OK!");
+        ESP.restart();
+    });
+    server.on("/password", HTTP_POST, []() {
+        String admin_pass = server.arg("admin_pass");
+        if(admin_pass != get_admin_pass()) {
+            server.send(403, "text/plain", "Wrong password!");
+            return;
+        }
+        String new_pass = server.arg("new_pass");
+        String new_pass_repeat = server.arg("new_pass_repeat");
+        if(new_pass != new_pass_repeat) {
+            server.send(400, "text/plain", "Passwords don't match!");
+            return;
+        }
+        prefs.putString(KEY_ADMIN_PASS, new_pass);
+        server.send(200, "text/plain", "OK!");
+        ESP.restart();
     });
 
     server.begin();

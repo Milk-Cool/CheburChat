@@ -10,6 +10,9 @@ socket.onerror = e => alert(JSON.stringify(e));
 
 const container = document.querySelector("#c");
 const form = document.querySelector("#f");
+const settings = document.querySelector("#e");
+
+document.querySelector("#s")?.addEventListener("click", () => settings?.classList.toggle("show"));
 
 // TODO: separate object (file?) with errors
 

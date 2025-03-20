@@ -17,6 +17,7 @@ body {
     margin-right: auto;
     padding: .5em;
     margin: .5em;
+    white-space: pre;
 }
 .m > img {
     min-width: 20em;

@@ -49,9 +49,16 @@ export function parsePacketPart(data: Uint8Array | ArrayBuffer): ParsedPacket | 
     if(data instanceof ArrayBuffer)
         data = new Uint8Array(data);
     if(!(data instanceof Uint8Array)) return null;
-    if(data.length < 5) return null;
+    if(data.length === 0) return null;
     const header = data[0];
-    if(header !== 0) return ["text/plain", new TextDecoder("utf-8").decode(data)];
+    if(header !== 0) {
+        try {
+            return ["text/plain", new TextDecoder("utf-8").decode(data)];
+        } catch(_e) {
+            return [errorMimeType, errors.failedToLoad];
+        }
+    }
+    if(data.length < 5) return null;
     let id = 0;
     for(let n = 1; n < 5; n++) {
         id <<= 8;

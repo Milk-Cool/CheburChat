@@ -46,6 +46,7 @@ body {
 }
 .m > img {
     min-width: 20em;
+    max-width: 90vw;
 }
 #h {
     background: darkslateblue;

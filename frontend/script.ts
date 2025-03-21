@@ -39,10 +39,21 @@ const pushMessage = async (data: string | Uint8Array, mimeType = "") => {
             el.innerText = errors.invalidBinaryData;
         }
     } else {
+        const dataURL = `data:${mimeType};base64,${await bufferToBase64(data)}`;
         if(mimeType.split("/")[0] === "image") {
             const img = document.createElement("img");
-            img.src = `data:${mimeType};base64,${await bufferToBase64(data)}`;
+            img.src = dataURL;
             el.appendChild(img);
+        } else if(mimeType.split("/")[0] === "audio") {
+            const audio = document.createElement("audio");
+            audio.src = dataURL;
+            audio.controls = true;
+            el.appendChild(audio);
+        } else if(mimeType.split("/")[0] === "video") {
+            const video = document.createElement("video");
+            video.src = dataURL;
+            video.controls = true;
+            el.appendChild(video);
         }
     }
     container?.appendChild(el);

@@ -1,4 +1,6 @@
+import errors from "./errors";
 import resizeImage from "./image";
+import { parsePacketPart, splitPacket } from "./packets";
 
 const maxWidth = 100;
 const maxHeight = 100;
@@ -14,33 +16,33 @@ const settings = document.querySelector("#e");
 
 document.querySelector("#s")?.addEventListener("click", () => settings?.classList.toggle("show"));
 
-// TODO: separate object (file?) with errors
+// TODO: scrolling on new messages when at the bottom
 
-const pushMessage = (data: string | Uint8Array | ArrayBuffer) => {
-    if(data instanceof ArrayBuffer)
-        data = new Uint8Array(data);
+// https://stackoverflow.com/a/66046176
+async function bufferToBase64(buffer: ArrayBuffer | Uint8Array): Promise<string> {
+    const base64url: string = await new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(new Blob([buffer]));
+    });
+    // Yes, we remove the MIME type since it might not always match what we recieve
+    return base64url.slice(base64url.indexOf(",") + 1);
+}
+
+const pushMessage = async (data: string | Uint8Array, mimeType = "") => {
     const el = document.createElement("div");
     el.classList.add("m");
-    if(typeof data === "string" && data.charCodeAt(0) !== 0) el.innerText = data;
-    else {
-        if(typeof data === "string") data = new Uint8Array([...data].map((c) => c.charCodeAt(0)));
-        if(!(data instanceof Uint8Array)) return;
-        const header = data[0];
-        if(header !== 0) {
-            try {
-                el.innerText = new TextDecoder("utf-8").decode(data);
-            } catch(_e) {
-                el.innerText = "Invalid binary data";
-            }
-        } else {
-            let n = 1;
-            while(data[n] != 0) n++;
-            const mimeType = new TextDecoder("utf-8").decode(data.slice(1, n));
-            if(mimeType.split("/")[0] === "image") {
-                const img = document.createElement("img");
-                img.src = `data:${mimeType};base64,${btoa(String.fromCharCode(...data.slice(n + 1)))}`;
-                el.appendChild(img);
-            }
+    if(typeof data === "string" || mimeType === "" || mimeType === "text/plain") {
+        try {
+            el.innerText = data instanceof Uint8Array ? new TextDecoder("utf-8").decode(data) : data;
+        } catch(_e) {
+            el.innerText = errors.invalidBinaryData;
+        }
+    } else {
+        if(mimeType.split("/")[0] === "image") {
+            const img = document.createElement("img");
+            img.src = `data:${mimeType};base64,${await bufferToBase64(data)}`;
+            el.appendChild(img);
         }
     }
     container?.appendChild(el);
@@ -48,14 +50,15 @@ const pushMessage = (data: string | Uint8Array | ArrayBuffer) => {
 
 socket.addEventListener("message", async e => {
     try {
-        pushMessage(typeof e.data === "string" ? e.data
-            : e.data instanceof Blob
-            ? await e.data.arrayBuffer()
-            : e.data instanceof ArrayBuffer
-            ? e.data
-            : "Unknown encoding");
+        if(typeof e.data === "string")
+            return pushMessage(e.data);
+        const packet = parsePacketPart(e.data instanceof Blob ? await e.data.arrayBuffer() : e.data);
+        if(packet === null) return;
+        if(typeof packet[1] === "string")
+            return pushMessage(packet[1]);
+        pushMessage(packet[1], packet[0]);
     } catch(_e) {
-        pushMessage("Message failed to load");
+        pushMessage(errors.failedToLoad);
     }
 });
 
@@ -73,17 +76,15 @@ form?.addEventListener("submit", e => {
     if(fileInput.files && fileInput.files[0]) {
         const reader = new FileReader();
         reader.onload = async e => {
-            const resized = await resizeImage(e.target?.result, maxWidth, maxHeight, imgMimeType);
+            // const resized = await resizeImage(e.target?.result, maxWidth, maxHeight, imgMimeType);
+            const resized = e.target?.result as string;
+            if(!resized) return;
             const bufImg = Uint8Array.from(atob(resized.slice(resized.indexOf(",") + 1)), c => c.charCodeAt(0));
-            const bufMime = Uint8Array.from(imgMimeType, c => c.charCodeAt(0));
-            const bufSep = Uint8Array.from([0]);
-            const bufFinal = new Uint8Array(bufSep.length * 2 + bufMime.length + bufImg.length);
-            bufFinal.set(bufSep, 0);
-            bufFinal.set(bufMime, bufSep.length);
-            bufFinal.set(bufSep, bufSep.length + bufMime.length);
-            bufFinal.set(bufImg, bufSep.length * 2 + bufMime.length);
-            socket.send(bufFinal);
-            pushMessage(bufFinal);
+            // const bufMime = Uint8Array.from(imgMimeType, c => c.charCodeAt(0));
+            const mime = resized.split(",")[0].split(";")[0].split(":")?.[1] || "image/png";
+            const split = splitPacket(bufImg, mime);
+            for(const part of split) socket.send(part);
+            pushMessage(bufImg, mime);
             fileInput.value = "";
         };
         reader.readAsDataURL(fileInput.files[0]);

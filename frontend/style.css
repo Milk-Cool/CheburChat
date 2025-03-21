@@ -47,7 +47,7 @@ body {
 }
 .m > img, .m > video {
     min-width: 20em;
-    max-width: 90vw;
+    max-width: min(90vw, 90vh);
 }
 #h {
     background: darkslateblue;

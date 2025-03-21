@@ -79,10 +79,11 @@ String get_message() {
 vector<uint8_t> clients;
 
 void event(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
+    String message;
     switch(type) {
         case WStype_CONNECTED:
             clients.push_back(num);
-            String message = get_message();
+            message = get_message();
             if(message.length() > 0) wss.sendTXT(num, message.c_str());
             break;
         case WStype_DISCONNECTED:

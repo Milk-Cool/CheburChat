@@ -5,4 +5,4 @@ An offline local chat for your ESP board
 |Name|PIO name|Supported|Tested|
 |-|-|-|-|
 |ESP32 Dev module|`esp32dev`|✅||
-|Wemos D1 mini|`d1_mini`|✅||
+|Wemos D1 mini|`d1_mini`|✅|✅|

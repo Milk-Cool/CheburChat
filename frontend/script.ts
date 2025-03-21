@@ -2,10 +2,6 @@ import errors from "./errors";
 import resizeImage from "./image";
 import { parsePacketPart, splitPacket } from "./packets";
 
-const maxWidth = 100;
-const maxHeight = 100;
-const imgMimeType = "image/png";
-
 const socket = new WebSocket(`ws://${location.hostname}:8080`);
 
 socket.onerror = e => alert(JSON.stringify(e));
@@ -56,7 +52,7 @@ const pushMessage = async (data: string | Uint8Array, mimeType = "") => {
             el.appendChild(video);
         }
     }
-    container?.appendChild(el);
+    container?.prepend(el);
 }
 
 socket.addEventListener("message", async e => {
@@ -87,12 +83,10 @@ form?.addEventListener("submit", e => {
     if(fileInput.files && fileInput.files[0]) {
         const reader = new FileReader();
         reader.onload = async e => {
-            // const resized = await resizeImage(e.target?.result, maxWidth, maxHeight, imgMimeType);
-            const resized = e.target?.result as string;
-            if(!resized) return;
-            const bufImg = Uint8Array.from(atob(resized.slice(resized.indexOf(",") + 1)), c => c.charCodeAt(0));
-            // const bufMime = Uint8Array.from(imgMimeType, c => c.charCodeAt(0));
-            const mime = resized.split(",")[0].split(";")[0].split(":")?.[1] || "image/png";
+            const image = e.target?.result as string;
+            if(!image) return;
+            const bufImg = Uint8Array.from(atob(image.slice(image.indexOf(",") + 1)), c => c.charCodeAt(0));
+            const mime = image.split(",")[0].split(";")[0].split(":")?.[1] || "image/png";
             const split = splitPacket(bufImg, mime);
             for(const part of split) socket.send(part);
             pushMessage(bufImg, mime);

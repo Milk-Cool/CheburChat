@@ -66,6 +66,9 @@ body {
     width: 100vw;
     height: calc(100vh - var(--bottom-bar-height) - var(--top-bar-height));
     overflow-y: scroll;
+
+    display: flex;
+    flex-direction: column-reverse;
 }
 input, label {
     height: 100%;

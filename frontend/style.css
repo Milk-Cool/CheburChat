@@ -3,7 +3,7 @@
     --bottom-bar-height: 3em;
 }
 body {
-    background: #eee;
+    background: #ddd;
 }
 * {
     font-family: sans-serif;
@@ -35,11 +35,14 @@ body {
     border-radius: 0 .5em .5em .5em;
     width: fit-content;
     line-break: anywhere;
-    margin-left: auto;
-    margin-right: auto;
     padding: .5em;
     margin: .5em;
     white-space: pre;
+}
+.m.r {
+    background: darkslateblue;
+    align-self: flex-end;
+    border-radius: .5em 0 .5em .5em;
 }
 .m > img {
     min-width: 20em;
@@ -62,10 +65,12 @@ body {
     position: fixed;
     top: var(--top-bar-height);
     line-height: var(--top-bar-height);
-    left: 0;
-    width: 100vw;
+    left: 50vw;
+    transform: translateX(-50%);
+    width: min(100vw, 100vh);
     height: calc(100vh - var(--bottom-bar-height) - var(--top-bar-height));
     overflow-y: scroll;
+    background: #eee;
 
     display: flex;
     flex-direction: column-reverse;

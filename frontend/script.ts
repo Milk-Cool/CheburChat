@@ -25,7 +25,7 @@ async function bufferToBase64(buffer: ArrayBuffer | Uint8Array): Promise<string>
     return base64url.slice(base64url.indexOf(",") + 1);
 }
 
-const pushMessage = async (data: string | Uint8Array, mimeType = "") => {
+const pushMessage = async (data: string | Uint8Array, me: boolean, mimeType = "") => {
     const el = document.createElement("div");
     el.classList.add("m");
     if(typeof data === "string" || mimeType === "" || mimeType === "text/plain") {
@@ -52,20 +52,21 @@ const pushMessage = async (data: string | Uint8Array, mimeType = "") => {
             el.appendChild(video);
         }
     }
+    if(me) el.classList.add("r");
     container?.prepend(el);
 }
 
 socket.addEventListener("message", async e => {
     try {
         if(typeof e.data === "string")
-            return pushMessage(e.data);
+            return pushMessage(e.data, false);
         const packet = parsePacketPart(e.data instanceof Blob ? await e.data.arrayBuffer() : e.data);
         if(packet === null) return;
         if(typeof packet[1] === "string")
-            return pushMessage(packet[1]);
-        pushMessage(packet[1], packet[0]);
+            return pushMessage(packet[1], false);
+        pushMessage(packet[1], false, packet[0]);
     } catch(_e) {
-        pushMessage(errors.failedToLoad);
+        pushMessage(errors.failedToLoad, false);
     }
 });
 
@@ -77,7 +78,7 @@ form?.addEventListener("submit", e => {
     if(textInput.value) {
         const text = textInput.value;
         socket.send(text);
-        pushMessage(text);
+        pushMessage(text, true);
         textInput.value = "";
     }
     if(fileInput.files && fileInput.files[0]) {
@@ -85,11 +86,11 @@ form?.addEventListener("submit", e => {
         reader.onload = async e => {
             const image = e.target?.result as string;
             if(!image) return;
-            const bufImg = Uint8Array.from(atob(image.slice(image.indexOf(",") + 1)), c => c.charCodeAt(0));
+            const bufMedia = Uint8Array.from(atob(image.slice(image.indexOf(",") + 1)), c => c.charCodeAt(0));
             const mime = image.split(",")[0].split(";")[0].split(":")?.[1] || "image/png";
-            const split = splitPacket(bufImg, mime);
+            const split = splitPacket(bufMedia, mime);
             for(const part of split) socket.send(part);
-            pushMessage(bufImg, mime);
+            pushMessage(bufMedia, true, mime);
             fileInput.value = "";
         };
         reader.readAsDataURL(fileInput.files[0]);

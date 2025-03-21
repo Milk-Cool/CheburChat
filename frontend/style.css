@@ -37,7 +37,8 @@ body {
     line-break: anywhere;
     padding: .5em;
     margin: .5em;
-    white-space: pre;
+    white-space: pre-wrap;
+    line-height: normal;
 }
 .m.r {
     background: darkslateblue;

@@ -4,7 +4,7 @@ CheburChat (pronounced cheh-boor-chat) is an offline local chat for your ESP boa
 ## Supported boards
 |Name|PIO name|Supported|Tested|
 |-|-|-|-|
-|ESP32 Dev module|`esp32dev`|✅||
+|ESP32 Dev module|`esp32dev`|✅|✅|
 |Wemos D1 mini|`d1_mini`|✅|✅|
 
 *You can help this project by testing or adding support for more boards!*

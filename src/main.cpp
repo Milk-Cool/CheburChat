@@ -123,6 +123,9 @@ String redirect_from[] = {
     "/connecttest.txt",
     "/redirect",
     "/hotspot-detect.html",
+    "/library/test/success.html",
+    "/success.txt",
+    "/canonical.html",
 };
 
 void setup() {

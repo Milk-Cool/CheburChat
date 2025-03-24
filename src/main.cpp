@@ -121,7 +121,8 @@ String redirect_from[] = {
     "/check_network_status.txt",
     "/ncsi.txt",
     "/connecttest.txt",
-    "/redirect"
+    "/redirect",
+    "/hotspot-detect.html",
 };
 
 void setup() {

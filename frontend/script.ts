@@ -12,8 +12,6 @@ const settings = document.querySelector("#e");
 
 document.querySelector("#s")?.addEventListener("click", () => settings?.classList.toggle("show"));
 
-// TODO: scrolling on new messages when at the bottom
-
 // https://stackoverflow.com/a/66046176
 async function bufferToBase64(buffer: ArrayBuffer | Uint8Array): Promise<string> {
     const base64url: string = await new Promise(resolve => {

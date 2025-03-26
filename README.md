@@ -41,7 +41,7 @@ Here's a ~~simple~~ rather complex example of such a mesh network:
 You can set up a mesh network by:
 
 0. Making sure each device uses the same AP settings (SSID, password)
-1. Collecting BSSIDs of each AP (`nmcli dev wifi` on Linux w/ NetworkManager)
+1. Collecting BSSIDs of each AP (can be seen in the settings, [don't forget to add 1 to the last byte](https://github.com/espressif/esp-idf/issues/14269))
 2. Initializing the mesh network in each device's settings by specifying the BSSID that device needs to connect to
 3. Restarting all devices, preferably starting from the one in the center
 

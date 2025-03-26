@@ -1,5 +1,4 @@
 import errors from "./errors";
-import resizeImage from "./image";
 import { parsePacketPart, splitPacket } from "./packets";
 
 const socket = new WebSocket(`ws://${location.hostname}:8080`);

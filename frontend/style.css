@@ -50,6 +50,9 @@ body {
     align-self: flex-end;
     border-radius: .5em 0 .5em .5em;
 }
+.m > a {
+    color: white;
+}
 .m > img, .m > video {
     min-width: 20em;
     max-width: min(90vw, 90vh);

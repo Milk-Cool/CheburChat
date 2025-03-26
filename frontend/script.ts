@@ -31,7 +31,7 @@ async function bufferToBase64(buffer: ArrayBuffer | Uint8Array): Promise<string>
 const pushMessage = async (data: string | Uint8Array, me: boolean, mimeType = "") => {
     const el = document.createElement("div");
     el.classList.add("m");
-    if(typeof data === "string" || mimeType === "" || mimeType === "text/plain") {
+    if(typeof data === "string" || mimeType === "") {
         try {
             el.innerText = data instanceof Uint8Array ? new TextDecoder("utf-8").decode(data) : data;
         } catch(_e) {
@@ -55,6 +55,12 @@ const pushMessage = async (data: string | Uint8Array, me: boolean, mimeType = ""
             video.src = dataURL;
             video.controls = true;
             el.appendChild(video);
+        } else {
+            const link = document.createElement("a");
+            link.href = dataURL;
+            link.download = "";
+            link.innerText = `Download file (${mimeType})`;
+            el.appendChild(link);
         }
     }
     if(me) el.classList.add("r");

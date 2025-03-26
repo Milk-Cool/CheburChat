@@ -30,6 +30,7 @@ Multiple message types are supported (as demonstrated above):
 - Image
 - Video
 - Audio
+- Arbitrary files
 
 You can also set a custom welcome message and change network settings in the "settings" menu on the top right.
 

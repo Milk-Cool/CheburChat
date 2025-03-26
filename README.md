@@ -14,6 +14,8 @@ First, install [PlatformIO](https://platformio.org/). Then, clone this project u
 
 - Click "General" -> "Upload"
 - Wait for the build/upload process to finish (this also builds the frontend)
+- Click "Platform" -> "Build Filesystem Image" (*yes, this is necessary*)
+- Wait for the build process to finish
 - Click "Platform" -> "Upload Filesystem Image"
 - Wait for the upload process to finish
 

@@ -101,3 +101,9 @@ form?.addEventListener("submit", e => {
         reader.readAsDataURL(fileInput.files[0]);
     }
 });
+
+fetch("/info").then(result => result.text()).then(text => {
+    const info = document.querySelector("#i");
+    if(!info || !("innerText" in info)) return;
+    info.innerText = text;
+});

@@ -392,6 +392,10 @@ void setup() {
         server.send(200, "text/plain", "OK!");
         ESP.restart();
     });
+    server.on("/info", HTTP_GET, []() {
+        String mac = WiFi.macAddress();
+        server.send(200, "text/plain", "MAC: " + mac);
+    });
 
     server.begin();
 

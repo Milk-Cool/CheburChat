@@ -18,6 +18,11 @@ body {
     left: 50vw;
     transform: translate(-50%, -50%);
     z-index: 1;
+    display: flex;
+    flex-direction: row;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: scroll;
 }
 #e input, #e textarea {
     background: white;

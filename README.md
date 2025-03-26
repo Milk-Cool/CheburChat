@@ -30,3 +30,17 @@ Multiple message types are supported (as demonstrated above):
 - Audio
 
 You can also set a custom welcome message and change network settings in the "settings" menu on the top right.
+
+# "Mesh" networks
+CheburChat devices can be connected into a mesh network (for sharing messages across multiple APs) where each device can connect to just one other device but can serve multiple other devices (so, a "tree" network). This is due to the limitations of ESP-8266s. Functionally, this is just like a mesh network with the only difference being worse performace.\
+Here's a simple example of such a mesh network:
+![](images/2025-03-26-19-03-32.png)
+
+You can set up a mesh network by:
+
+0. Making sure each device uses the same AP settings (SSID, password)
+1. Collecting BSSIDs of each AP (`nmcli dev wifi` on Linux w/ NetworkManager)
+2. Initializing the mesh network in each device's settings by specifying the BSSID that device needs to connect to
+3. Restarting all devices, preferably starting from the one in the center
+
+> Note: you can set up a very simple mesh network with two devices without collecting BSSIDs by initializing the mesh network on just one of them. However, you cannot do that with bigger networks, as this enables connection loops. These loops are detected by the devices themselves and they will reboot once they detect such a loop.

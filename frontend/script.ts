@@ -10,6 +10,12 @@ const container = document.querySelector("#c");
 const form = document.querySelector("#f");
 const settings = document.querySelector("#e");
 
+const randByte = () => Math.floor(Math.random() * 256);
+const byte1 = document.querySelector("#byte1");
+const byte2 = document.querySelector("#byte2");
+if(byte1 && "value" in byte1) byte1.value = randByte();
+if(byte2 && "value" in byte2) byte2.value = randByte();
+
 document.querySelector("#s")?.addEventListener("click", () => settings?.classList.toggle("show"));
 
 // https://stackoverflow.com/a/66046176
@@ -34,7 +40,9 @@ const pushMessage = async (data: string | Uint8Array, me: boolean, mimeType = ""
         }
     } else {
         const dataURL = `data:${mimeType};base64,${await bufferToBase64(data)}`;
-        if(mimeType.split("/")[0] === "image") {
+        if(mimeType.split("/")[0] === "cheburchat") {
+            return;
+        } else if(mimeType.split("/")[0] === "image") {
             const img = document.createElement("img");
             img.src = dataURL;
             el.appendChild(img);

@@ -13,7 +13,7 @@ CheburChat (pronounced cheh-boor-chat) is an offline local chat for your ESP boa
 First, install [PlatformIO](https://platformio.org/) and [NodeJS](https://nodejs.org/en). Then, clone this project using `git clone`, install Node dependencies in `frontend/` using `npm i`, open it in VSCode and in the PlatformIO menu (on the left side) select your board and:
 
 - Click "General" -> "Upload"
-- Wait for the build/upload process to finish (this also builds the frontend)
+- Wait for the build/upload process to finish
 - Click "Platform" -> "Build Filesystem Image" (*yes, this is necessary*)
 - Wait for the build process to finish
 - Click "Platform" -> "Upload Filesystem Image"

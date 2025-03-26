@@ -35,7 +35,7 @@ You can also set a custom welcome message and change network settings in the "se
 
 # "Mesh" networks
 CheburChat devices can be connected into a mesh network (for sharing messages across multiple APs) where each device can connect to just one other device but can serve multiple other devices (so, a "tree" network). This is due to the limitations of ESP-8266s. Functionally, this is just like a mesh network with the only difference being worse performace.\
-Here's a simple example of such a mesh network:
+Here's a ~~simple~~ rather complex example of such a mesh network:
 ![](images/2025-03-26-19-03-32.png)
 
 You can set up a mesh network by:

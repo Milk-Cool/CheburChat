@@ -247,6 +247,11 @@ String redirect_from[] = {
     "/success.txt",
     "/canonical.html",
 };
+String not_found_from[] = {
+    "/wpad.dat",
+    "/favicon.ico",
+    "/chat/favicon.ico",
+};
 
 void setup() {
     prefs.begin("cheburchat");
@@ -327,9 +332,13 @@ void setup() {
             server.send(302, "text/plain", "");
         });
     }
+    for(String path : not_found_from)
+        server.on(path, HTTP_GET, []() { server.send(404); });
     server.onNotFound([]() {
-        if(!handleFileRead(server.uri()))
-            server.send(404, "text/plain", (String("Not found (LittleFS): ") + server.uri()).c_str());
+        if(!handleFileRead(server.uri())) {
+            server.sendHeader("Location", "/chat/index.html", true);
+            server.send(302, "text/plain", "");
+        }
     });
     server.on("/settings", HTTP_POST, []() {
         String admin_pass = server.arg("admin_pass");

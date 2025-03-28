@@ -380,12 +380,12 @@ void setup() {
         }
         int byte1 = server.arg("byte1").toInt();
         int byte2 = server.arg("byte2").toInt();
+        String bssid = server.arg("bssid");
         if(byte1 < 0 || byte1 > 255 || byte2 < 0 || byte2 > 255
-            || (byte1 == 0 && byte2 == 0)) {
+            || (byte1 == 0 && byte2 == 0 && bssid != "")) {
             server.send(400, "text/plain", "Invalid bytes!");
             return;
         }
-        String bssid = server.arg("bssid");
         prefs.putUChar(KEY_IP_BYTE1, byte1);
         prefs.putUChar(KEY_IP_BYTE2, byte2);
         prefs.putString(KEY_BSSID, bssid);

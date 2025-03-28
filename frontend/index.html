@@ -38,6 +38,14 @@
                     <input name="bssid" placeholder="BSSID (12:34:56:78:90:ab)" pattern="([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}"><br>
                     <input type="submit" value="Init">
                 </form>
+                <h3>Deinitialize mesh</h3>
+                <form action="/ip" method="POST">
+                    <input name="username" value="cheburchat" hidden>
+                    <input type="password" name="admin_pass" placeholder="Admin password" autocomplete="current-password"><br>
+                    <input name="byte1" hidden value="0"><input name="byte2" hidden value="0">
+                    <input name="bssid" hidden value="">
+                    <input type="submit" value="Deinit">
+                </form>
                 <h3>Info</h3>
                 <p id="i"></p>
                 <p>Note: add 1 to the MAC address to get the BSSID</p>
